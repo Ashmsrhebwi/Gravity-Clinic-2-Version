@@ -41,6 +41,12 @@ export const clinicService = {
   getTreatments: () => 
     api.get<any[]>('/public/treatments'),
 
+  getResults: () => 
+    api.get<any[]>('/public/results'),
+
+  getArticles: () => 
+    api.get<any[]>('/public/articles'),
+
   getTestimonials: () => 
     api.get<any[]>('/public/testimonials'),
 
@@ -122,5 +128,102 @@ export const clinicService = {
   createLocation: (data: any) => api.post('/admin/locations', data),
   updateLocation: (id: number, data: any) => api.put(`/admin/locations/${id}`, data),
   deleteLocation: (id: number) => api.delete(`/admin/locations/${id}`),
+
+  // Treatments
+  createTreatment: (data: any) => {
+    if (data.image instanceof File) {
+      const formData = new FormData();
+      Object.keys(data).forEach(key => {
+        if (key === 'title' || key === 'category' || key === 'description' || key === 'duration' || key === 'features') {
+          formData.append(key, JSON.stringify(data[key]));
+        } else {
+          formData.append(key, data[key]);
+        }
+      });
+      return api.post('/admin/treatments', formData, { headers: { 'Content-Type': 'multipart/form-data' } });
+    }
+    return api.post('/admin/treatments', data);
+  },
+  updateTreatment: (id: string | number, data: any) => {
+    // Laravel handles PUT with mulipart/form-data via POST + _method=PUT
+    if (data.image instanceof File) {
+      const formData = new FormData();
+      formData.append('_method', 'PUT');
+      Object.keys(data).forEach(key => {
+        if (key === 'title' || key === 'category' || key === 'description' || key === 'duration' || key === 'features') {
+          formData.append(key, JSON.stringify(data[key]));
+        } else {
+          formData.append(key, data[key]);
+        }
+      });
+      return api.post(`/admin/treatments/${id}`, formData, { headers: { 'Content-Type': 'multipart/form-data' } });
+    }
+    return api.put(`/admin/treatments/${id}`, data);
+  },
+  deleteTreatment: (id: string | number) => api.delete(`/admin/treatments/${id}`),
+
+  // Results
+  createResult: (data: any) => {
+    if (data.image_before instanceof File || data.image_after instanceof File) {
+      const formData = new FormData();
+      Object.keys(data).forEach(key => {
+        if (key === 'title' || key === 'description') {
+          formData.append(key, JSON.stringify(data[key]));
+        } else {
+          formData.append(key, data[key]);
+        }
+      });
+      return api.post('/admin/results', formData, { headers: { 'Content-Type': 'multipart/form-data' } });
+    }
+    return api.post('/admin/results', data);
+  },
+  updateResult: (id: string | number, data: any) => {
+    if (data.image_before instanceof File || data.image_after instanceof File) {
+      const formData = new FormData();
+      formData.append('_method', 'PUT');
+      Object.keys(data).forEach(key => {
+        if (key === 'title' || key === 'description') {
+          formData.append(key, JSON.stringify(data[key]));
+        } else {
+          formData.append(key, data[key]);
+        }
+      });
+      return api.post(`/admin/results/${id}`, formData, { headers: { 'Content-Type': 'multipart/form-data' } });
+    }
+    return api.put(`/admin/results/${id}`, data);
+  },
+  deleteResult: (id: string | number) => api.delete(`/admin/results/${id}`),
+
+  // Articles
+  createArticle: (data: any) => {
+    if (data.image instanceof File) {
+      const formData = new FormData();
+      Object.keys(data).forEach(key => {
+        if (key === 'title' || key === 'slug' || key === 'content') {
+          formData.append(key, JSON.stringify(data[key]));
+        } else {
+          formData.append(key, data[key]);
+        }
+      });
+      return api.post('/admin/articles', formData, { headers: { 'Content-Type': 'multipart/form-data' } });
+    }
+    return api.post('/admin/articles', data);
+  },
+  updateArticle: (id: string | number, data: any) => {
+    if (data.image instanceof File) {
+      const formData = new FormData();
+      formData.append('_method', 'PUT');
+      Object.keys(data).forEach(key => {
+        if (key === 'title' || key === 'slug' || key === 'content') {
+          formData.append(key, JSON.stringify(data[key]));
+        } else {
+          formData.append(key, data[key]);
+        }
+      });
+      return api.post(`/admin/articles/${id}`, formData, { headers: { 'Content-Type': 'multipart/form-data' } });
+    }
+    return api.put(`/admin/articles/${id}`, data);
+  },
+  deleteArticle: (id: string | number) => api.delete(`/admin/articles/${id}`),
 };
 
